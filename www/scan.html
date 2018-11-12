@@ -6,10 +6,66 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Scanner</title>
+    <link rel="stylesheet" href="https://unpkg.com/onsenui/css/onsenui.css">
+    <link rel="stylesheet" href="https://unpkg.com/onsenui/css/onsen-css-components.min.css">
+    <script src="https://unpkg.com/onsenui/js/onsenui.min.js"></script>
+    <script type="text/javascript" src="product.html"></script>
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.4.2/css/all.css" integrity="sha384-/rXc/GQVaYpyDdyxK+ecHPVYJSN9bmVFBvjA/9eOB+pb3F2w2N6fc5qB9Ew5yIns"
+        crossorigin="anonymous">
     <script src="cordova.js"></script>
 </head>
+<style type="text/css">
+    .scanner-laser {
+        position: absolute;
+        margin: auto;
+        height: 50px;
+        width: 50px;
+    }
+    .solid-leftTop {
+        top: 0;
+        left: 0;
+        border-top: solid #a996f1 5px;
+        border-left: solid #a996f1 5px;
+    }
+    .solid-leftBottom {
+        bottom: 0;
+        left: 0;
+        border-bottom: solid #a996f1 5px;
+        border-left: solid #a996f1 5px;
+    }
+    .solid-rightTop {
+        top: 0;
+        right: 0;
+        border-top: solid #a996f1 5px;
+        border-right: solid #a996f1 5px;
+    }
+    .solid-rightBottom {
+        bottom: 0;
+        right: 0;
+        border-bottom: solid #a996f1 5px;
+        border-right: solid #a996f1 5px;
+    }
+</style>
 
 <body>
+        <div style="position: relative;display: inline-block;margin-top:50% ;margin-left:6%  ">
+                <canvas id="qr-canvas" width="320" height="240"></canvas>
+                <div class="scanner-laser solid-rightBottom" style="opacity: 0.5;"></div>
+                <div class="scanner-laser solid-rightTop" style="opacity: 0.5;"></div>
+                <div class="scanner-laser solid-leftBottom" style="opacity: 0.5;"></div>
+                <div class="scanner-laser solid-leftTop" style="opacity: 0.5;"></div>
+            </div>
+            <footer class="fixed-bottom" style="position: fixed;height: 65px;bottom: 0;width: 100%; background-color: black;">
+                <ons-button style="background-color:black; width: 30%;margin-top: 2px; ">
+                    <i id="light" style="font-size: 50px; color:white;" class="fas fa-lightbulb" onclick="enableLight();"></i>
+                </ons-button>
+                <ons-button style="background-color:black; width: 30%; margin-top: 2px;">
+                    <i id="SwapCamera" style="font-size: 50px; color:white;" class="fas fa-undo-alt" onclick="swapCamera();"></i>
+                </ons-button>
+                <ons-button style="background-color:black; width: 30%;margin-top: 2px;">
+                    <i style="font-size: 50px; color:white;" class="fas fa-times" onclick="hideScanner();"></i>
+                </ons-button>
+            </footer>
     <script>
         document.addEventListener("deviceready", onDeviceReady, false);
 
@@ -25,6 +81,8 @@
                     // The scan completed, display the contents of the QR code:
                     localStorage.setItem("code", text);
                     QRScanner.hide();
+                    lighton = 1;
+                    enableLight();
                     window.location.href = 'index.html';
                 }
             }
@@ -34,7 +92,50 @@
             // Be sure to make any opaque HTML elements transparent here to avoid
             // covering the video.
         }
-
+        var lighton = 0;
+        var swap = 0;
+        function enableLight() {
+            if (lighton == 0) {
+                QRScanner.enableLight(function (err, status) {
+                    err && console.error(err);
+                    console.log(status);
+                });
+                document.getElementById("light").style.color = "yellow";
+                lighton = 1;
+            } else if (lighton == 1) {
+                QRScanner.disableLight(function (err, status) {
+                    err && console.error(err);
+                    console.log(status);
+                });
+                document.getElementById("light").style.color = "white";
+                lighton = 0;
+            }
+        }
+        function hideScanner() {
+            QRScanner.hide();
+            lighton = 1;
+            swap = 1;
+            enableLight();
+            swapCamera();
+            window.location.href = 'index.html'
+        }
+        function swapCamera() {
+            if (swap == 0) {
+                QRScanner.useFrontCamera(function (err, status) {
+                    err && console.error(err);
+                    console.log(status);
+                });
+                document.getElementById("SwapCamera").style.color = "yellow";
+                swap = 1;
+            } else if (swap == 1) {
+                QRScanner.useBackCamera(function (err, status) {
+                    err && console.error(err);
+                    console.log(status);
+                });
+                document.getElementById("SwapCamera").style.color = "white";
+                swap = 0;
+            }
+        }
     </script>
 </body>
 

@@ -305,8 +305,7 @@
                 console.log("Error getting document:", error);
             });
 
-        }
-        else {
+        } else {
             showDetailP();
             myNavigator.pushPage('Detail.html');
         }
@@ -327,6 +326,7 @@
             var dataproduct = localStorage.getItem('getDep');
         } else if (code != null) {
             var dataproduct = localStorage.getItem('code');
+            localStorage.removeItem('code');
         }
 
         var apr = db.collection("Product").where("Title", "==", dataproduct);
